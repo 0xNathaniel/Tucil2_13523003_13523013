@@ -6,9 +6,8 @@
 using namespace std;
 
 class ImageProcessor {
-    private:
-        static string inputImagePath();
     public:
+        static string inputImagePath();
         static vector<vector<vector<int>>> loadImage(const string& imagePath);
 };
 

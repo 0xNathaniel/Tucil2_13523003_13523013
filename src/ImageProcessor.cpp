@@ -1,6 +1,5 @@
 #include "ImageProcessor.hpp"
 #include <opencv2/opencv.hpp>
-#include <cctype>
 #include <fstream>
 
 using namespace cv;
@@ -13,21 +12,16 @@ string ImageProcessor::inputImagePath() {
         cout << "Masukkan alamat absolut gambar: ";
         getline(cin, imagePath);
 
-        if (equalsIgnoreCase(tolower(imagePath), "exit")) {
-            break;
+        if (imagePath == "exit") {
+            return "exit";
         }
 
-        if (!fileExists(imagePath)) {
-            cout << "File tidak ditemukan!" << endl;
-        } 
+        Mat image = imread(imagePath, IMREAD_COLOR);
+        if (image.empty()) {
+            cout << "Gambar tidak ditemukan!" << endl;
+        }
         else {
-            Mat image = imread(imagePath, IMREAD_COLOR);
-            if (image.empty()) {
-                cout << "Gambar tidak ditemukan!" << endl;
-            }
-            else {
-                return imagePath;
-            }
+            return imagePath;
         }
     }
 }

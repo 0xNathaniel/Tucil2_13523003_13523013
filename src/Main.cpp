@@ -1,5 +1,4 @@
 #include <opencv2/opencv.hpp>
-#include <cctype>
 #include <iostream>
 #include <vector>
 
@@ -11,11 +10,11 @@ using namespace std;
 int main()
 {
     string imagePath = ImageProcessor::inputImagePath();
-    if (tolower(imagePath) != "exit") {
+    if (imagePath != "exit") {
         return -1;
     }
 
-    vector<vector<vector<int>>> rgbMatrix = ImageProcessor(imagePath);
+    vector<vector<vector<int>>> rgbMatrix = ImageProcessor::loadImage(imagePath);
     /* 
     cout << "[";
     for (int i = 0; i < rows; i++)
