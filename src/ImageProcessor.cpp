@@ -33,10 +33,8 @@ vector<vector<vector<int>>> ImageProcessor::loadImage(const string& imagePath) {
     int cols = image.cols;
     vector<vector<vector<int>>> rgbMatrix(rows, vector<vector<int>>(cols, vector<int>(3)));
 
-    for (int i = 0; i < rows; i++)
-    {
-        for (int j = 0; j < cols; j++)
-        {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
             Vec3b pixel = image.at<Vec3b>(i, j);
             rgbMatrix[i][j][0] = pixel[2];
             rgbMatrix[i][j][1] = pixel[1];
