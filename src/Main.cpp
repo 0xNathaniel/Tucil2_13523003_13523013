@@ -3,35 +3,37 @@
 #include <vector>
 
 #include "ImageProcessor.hpp"
+#include "Quadtree.hpp"
+#include "Utils.hpp"
 
 using namespace cv;
 using namespace std;
 
 int main()
 {
-    string imagePath = ImageProcessor::inputImagePath();
+    // Declarations
+
+    // Variance method encodings:
+    // 0: Variance
+    // 1: Mean Absolute Deviation (MAD)
+    // 2: Max Pixel Difference
+    // 3: Entropy
+
+    string imagePath;
+    int varianceMethod; // Encodings
+    double varianceThreshold;
+    int minBlockSize;
+    vector<vector<vector<int>>> rgbMatrix
+    
+    // Image processing (loading)
+    imagePath = ImageProcessor::inputImagePath();
     if (imagePath != "exit") {
         return -1;
     }
+    rgbMatrix = ImageProcessor::loadImage(imagePath);
 
-    vector<vector<vector<int>>> rgbMatrix = ImageProcessor::loadImage(imagePath);
-    /* 
-    cout << "[";
-    for (int i = 0; i < rows; i++)
-    {
-        cout << "[";
-        for (int j = 0; j < cols; j++)
-        {
-            cout << "[" << rgbMatrix[i][j][0] << "," << rgbMatrix[i][j][1] << "," << rgbMatrix[i][j][2] << "]";
-            if (j < cols - 1)
-                cout << ",";
-        }
-        cout << "]";
-        if (i < rows - 1)
-            cout << ",";
-    }
-    cout << "]" << endl; 
-    */
+    // Constraints input
+    tie(varianceMethod, varianceThreshold, minBlockSize) = validateInputConstraints();
 
     return 0;
 }
