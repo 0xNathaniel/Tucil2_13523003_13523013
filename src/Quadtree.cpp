@@ -34,15 +34,14 @@ bool Node::isValidConstraints() {
         block.calculateEntropy();
         return (block.getArea() > minBlockSize) && (block.getEntropy() > varianceThreshold);
     }
+    return false;
 }
 
 Quadtree::Quadtree(int width, int height, const vector<vector<vector<int>>>* rgbMatrix, int varianceMethod, double varianceThreshold, int minBlockSize) {
-    Node node(0, 0, width, height, rgbMatrix);
-    root = &node;
-
+    root = new Node(0, 0, width, height, rgbMatrix);
     Node::varianceMethod = varianceMethod;
-    Node:: varianceThreshold = varianceThreshold;
-    Node:: minBlockSize = minBlockSize;
+    Node::varianceThreshold = varianceThreshold;
+    Node::minBlockSize = minBlockSize;
 }
 
 
