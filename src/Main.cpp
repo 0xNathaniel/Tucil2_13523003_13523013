@@ -23,14 +23,26 @@ int main()
     int varianceMethod; // Encodings
     double varianceThreshold;
     int minBlockSize;
-    vector<vector<vector<int>>> rgbMatrix
-    
+    vector<vector<vector<int>>> rgbMatrix;
+
     // Image processing (loading)
     imagePath = ImageProcessor::inputImagePath();
-    if (imagePath != "exit") {
+    if (imagePath == "exit")
+    {
         return -1;
     }
     rgbMatrix = ImageProcessor::loadImage(imagePath);
+    // for (int i = 0; i < rgbMatrix.size(); ++i)
+    // {
+    //     for (int j = 0; j < rgbMatrix[i].size(); ++j)
+    //     {
+    //         for (int k = 0; k < rgbMatrix[i][j].size(); ++k)
+    //         {
+    //             cout << "[" << i << "," << j << "," << k << "]="
+    //                  << rgbMatrix[i][j][k] << endl;
+    //         }
+    //     }
+    // }
 
     // Constraints input
     tie(varianceMethod, varianceThreshold, minBlockSize) = validateInputConstraints();
