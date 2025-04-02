@@ -1,7 +1,13 @@
 # Tucil2_13523003_13523013
 
-# How to run programme
+# Prerequisites
 
-insert this line into terminal
-gcc -o main main.cpp
-./main
+## Requirements
+
+- WSL
+
+# How to run program
+
+1. Make
+2. cd bin/
+3. ./compressor

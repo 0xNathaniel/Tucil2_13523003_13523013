@@ -67,5 +67,5 @@ tuple<double, double, int> validateInputConstraints()
         cout << "Ukuran blok harus lebih besar dari 0. Coba lagi.\n";
     }
 
-    return make_tuple(varianceMethod - 1, varianceThreshold, minBlockSize);
+    return make_tuple(varianceMethod, varianceThreshold, minBlockSize);
 }

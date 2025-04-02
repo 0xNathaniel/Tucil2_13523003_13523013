@@ -13,12 +13,10 @@ int TreeNode::minBlockSize = 0;
 TreeNode::TreeNode(int x, int y, int width, int height, const vector<vector<vector<int>>> *rgbMatrix)
     : block(x, y, width, height, TreeNode::minBlockSize, TreeNode::varianceThreshold, TreeNode::varianceMethod, rgbMatrix), isLeaf(true)
 {
-    cout << "creating tree node";
     for (int i = 0; i < 4; i++)
     {
         child[i] = nullptr;
     }
-    cout << "subdividing";
     subdivide(rgbMatrix);
 }
 
@@ -66,12 +64,15 @@ void TreeNode::draw(Mat &output)
         Scalar color(avgColor[2], avgColor[1], avgColor[0]); // BGR format for OpenCV
 
         // Draw rectangle with average color
-        // Use Point() constructor for exact pixel positioning
         Point topLeft(block.getX(), block.getY());
         Point bottomRight(block.getX() + block.getWidth(), block.getY() + block.getHeight());
 
         // Fill the rectangle with color (no gaps)
         rectangle(output, topLeft, bottomRight - Point(1, 1), color, -1); // -1 for filled rectangle
+
+        // Draw a 1-pixel outline
+        Scalar outlineColor(0, 0, 0);                                           // Black outline
+        rectangle(output, topLeft, bottomRight - Point(1, 1), outlineColor, 1); // 1 for outline thickness
     }
     else
     {
@@ -84,7 +85,6 @@ void TreeNode::draw(Mat &output)
         }
     }
 }
-
 int TreeNode::countLeafTreeNodes() const
 {
     if (isLeaf)
