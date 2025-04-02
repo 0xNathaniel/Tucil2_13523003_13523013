@@ -63,16 +63,17 @@ void TreeNode::draw(Mat &output)
 {
     if (isLeaf)
     {
-        // This is a leaf Treenode, fill with average color
+        // This is a leaf TreeNode, fill with average color
         vector<double> avgColor = block.getAverageRGB();
         Scalar color(avgColor[2], avgColor[1], avgColor[0]); // BGR format for OpenCV
 
         // Draw rectangle with average color
-        Rect rect(block.getX(), block.getY(), block.getWidth(), block.getHeight());
-        rectangle(output, rect, color, -1); // -1 for filled rectangle
+        // Use Point() constructor for exact pixel positioning
+        Point topLeft(block.getX(), block.getY());
+        Point bottomRight(block.getX() + block.getWidth(), block.getY() + block.getHeight());
 
-        // Draw border for visualization (optional)
-        rectangle(output, rect, Scalar(0, 0, 0), 1);
+        // Fill the rectangle with color (no gaps)
+        rectangle(output, topLeft, bottomRight - Point(1, 1), color, -1); // -1 for filled rectangle
     }
     else
     {
