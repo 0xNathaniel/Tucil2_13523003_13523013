@@ -37,9 +37,9 @@ int Block::getArea() const
 vector<double> Block::getAverageRGB() const
 {
     double sumR = 0, sumG = 0, sumB = 0;
-    for (int i = 0; i < height + height; i++)
+    for (int i = y; i < y + height; i++)
     {
-        for (int j = 0; j < width; j++)
+        for (int j = x; j < x + width; j++)
         {
             sumR += (*rgbMatrix)[i][j][0];
             sumG += (*rgbMatrix)[i][j][1];
@@ -56,16 +56,16 @@ vector<double> Block::getAverageRGB() const
 
 double Block::getMaxPixelDiff() const
 {
-    double maxR = (*rgbMatrix)[0][0][0];
-    double maxG = (*rgbMatrix)[0][0][1];
-    double maxB = (*rgbMatrix)[0][0][2];
-    double minR = (*rgbMatrix)[0][0][0];
-    double minG = (*rgbMatrix)[0][0][1];
-    double minB = (*rgbMatrix)[0][0][2];
+    double maxR = (*rgbMatrix)[x][y][0];
+    double maxG = (*rgbMatrix)[x][y][1];
+    double maxB = (*rgbMatrix)[x][y][2];
+    double minR = (*rgbMatrix)[x][y][0];
+    double minG = (*rgbMatrix)[x][y][1];
+    double minB = (*rgbMatrix)[x][y][2];
 
-    for (int i = 0; i < height; i++)
+    for (int i = y; i < y + height; i++)
     {
-        for (int j = 0; j < width; j++)
+        for (int j = x; j < x + width; j++)
         {
             if ((double)(*rgbMatrix)[i][j][0] > maxR)
             {
@@ -100,9 +100,9 @@ double Block::getMaxPixelDiff() const
 double Block::getVariance() const
 {
     double varianceR = 0, varianceG = 0, varianceB = 0;
-    for (int i = 0; i < height; i++)
+    for (int i = y; i < y + height; i++)
     {
-        for (int j = 0; j < width; j++)
+        for (int j = x; j < x + width; j++)
         {
             varianceR += pow((double)(*rgbMatrix)[i][j][0] - averageRGB[0], 2);
             varianceG += pow((double)(*rgbMatrix)[i][j][1] - averageRGB[1], 2);
@@ -119,9 +119,9 @@ double Block::getVariance() const
 double Block::getMeanAbsoluteDeviation() const
 {
     double madR = 0, madG = 0, madB = 0;
-    for (int i = 0; i < height; i++)
+    for (int i = y; i < y + height; i++)
     {
-        for (int j = 0; j < width; j++)
+        for (int j = x; j < x + width; j++)
         {
             madR += abs((double)(*rgbMatrix)[i][j][0] - averageRGB[0]);
             madG += abs((double)(*rgbMatrix)[i][j][1] - averageRGB[1]);
@@ -138,9 +138,9 @@ double Block::getMeanAbsoluteDeviation() const
 double Block::getEntropy() const
 {
     double entropyR = 0, entropyG = 0, entropyB = 0;
-    for (int i = 0; i < height; i++)
+    for (int i = y; i < y + height; i++)
     {
-        for (int j = 0; j < width; j++)
+        for (int j = x; j < x + width; j++)
         {
             const double pixelR = (double)(*rgbMatrix)[i][j][0];
             const double pixelG = (double)(*rgbMatrix)[i][j][1];

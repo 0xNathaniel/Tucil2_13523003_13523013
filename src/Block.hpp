@@ -17,6 +17,9 @@ public:
     // Constructor
     Block(int x, int y, int width, int height, int minBlockSize, double threshold, int methodNum, const vector<vector<vector<int>>> *rgbMatrix);
 
+    // Destructor
+    ~Block();
+
     // Getter
     int getX() const;
     int getY() const;
