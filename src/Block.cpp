@@ -4,8 +4,6 @@
 
 Block::Block(int x, int y, int width, int height, int minBlockSize, double threshold, int methodNum, const vector<vector<vector<int>>> *rgbMatrix) : x(x), y(y), width(width), height(height), area(width * height), minBlockSize(minBlockSize), methodNum(methodNum), threshold(threshold), rgbMatrix(rgbMatrix)
 {
-    area = width * height;
-    vector<double> averageRGB;
     averageRGB = getAverageRGB();
 }
 
@@ -163,7 +161,6 @@ double Block::getEntropy() const
 
 bool Block::calcIsValid() const
 {
-    cout << "checking validity";
     if ((area / 4) < minBlockSize)
     {
         return true;

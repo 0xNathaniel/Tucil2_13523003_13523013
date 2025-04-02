@@ -13,13 +13,12 @@ int TreeNode::minBlockSize = 0;
 TreeNode::TreeNode(int x, int y, int width, int height, const vector<vector<vector<int>>> *rgbMatrix)
     : block(x, y, width, height, TreeNode::minBlockSize, TreeNode::varianceThreshold, TreeNode::varianceMethod, rgbMatrix), isLeaf(true)
 {
-    cout << "creating child" << endl;
+    cout << "creating tree node";
     for (int i = 0; i < 4; i++)
     {
         child[i] = nullptr;
     }
-    cout << "subdividing" << endl;
-
+    cout << "subdividing";
     subdivide(rgbMatrix);
 }
 
@@ -37,9 +36,8 @@ TreeNode::~TreeNode()
 
 void TreeNode::subdivide(const vector<vector<vector<int>>> *rgbMatrix)
 {
-    if (!block.calcIsValid() && block.getWidth() > TreeNode::minBlockSize && block.getHeight() > TreeNode::minBlockSize)
+    if (!block.calcIsValid())
     {
-        cout << "subdividing";
         isLeaf = false;
 
         int childWidth = block.getWidth() / 2;
@@ -131,10 +129,8 @@ Quadtree::~Quadtree()
 void Quadtree::compressImage()
 {
     // Create the root Treenode, which will recursively create the entire tree
-    cout << "creating root node" << endl;
     if (root == nullptr)
     {
-        cout << "creating tree node" << endl;
         root = new TreeNode(0, 0, width, height, rgbMatrix);
     }
 }
