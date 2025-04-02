@@ -25,6 +25,7 @@
     "*.ejs": "html",
     "algorithm": "cpp",
     "tuple": "cpp",
-    "ostream": "cpp"
+    "ostream": "cpp",
+    "cmath": "cpp"
   }
 }
