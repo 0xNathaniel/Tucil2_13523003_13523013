@@ -11,5 +11,9 @@ $(BIN): $(SRC)
 	@mkdir -p bin
 	$(CXX) $(CXXFLAGS) $(SRC) -o $(BIN) $(LDFLAGS)
 
+
+run: all
+	./$(BIN)
+
 clean:
 	rm -rf bin/*
