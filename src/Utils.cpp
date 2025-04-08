@@ -34,13 +34,14 @@ tuple<double, double, int> validateInputConstraints()
         cout << "(2) Mean Absolute Deviation (MAD)" << endl;
         cout << "(3) Max Pixel Difference" << endl;
         cout << "(4) Entropy" << endl;
-        cout << "Pilih metode variance sesuai angkanya (1-4): ";
+        cout << "(5) Structural Similarity Index (SSIM)" << endl;
+        cout << "Pilih metode variance sesuai angkanya (1-5): ";
         cin >> varianceMethod;
-        if (varianceMethod >= 1 && varianceMethod <= 4)
+        if (varianceMethod >= 1 && varianceMethod <= 5)
         {
             break;
         }
-        cout << "Input tidak valid. Coba lagi." << endl;
+        cout << "Input tidak valid. Coba lagi." << endl << endl;
     }
 
     // Input varianceThreshold
@@ -48,11 +49,24 @@ tuple<double, double, int> validateInputConstraints()
     {
         cout << "Masukkan threshold variance: ";
         cin >> varianceThreshold;
-        if (varianceThreshold > 0)
+        //  Validate SSIM variance threshold
+        if (varianceMethod == 5)
         {
-            break;
+            if (varianceThreshold > 0 && varianceThreshold < 1)
+            {
+                break;
+            }
+            cout << "Threshold harus bernilai antara 0-1. Coba lagi." << endl;
         }
-        cout << "Threshold harus lebih besar dari 0. Coba lagi." << endl;
+        // Validate other methods' variance threshold
+        else
+        {
+            if (varianceThreshold > 0)
+            {
+                break;
+            }
+            cout << "Threshold harus lebih besar dari 0. Coba lagi." << endl;
+        }
     }
 
     // Input minBlockSize

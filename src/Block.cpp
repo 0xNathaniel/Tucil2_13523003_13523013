@@ -159,14 +159,71 @@ double Block::getEntropy() const
     return (entropyR + entropyG + entropyB) / 3.0;
 }
 
+double Block::getStructSimIdx() const {
+    int pixelCount = width * height;
+
+    const double K1 = 0.01, K2 = 0.03, L = 255.0;
+    const double C1 = (K1 * L) * (K1 * L);
+    const double C2 = (K2 * L) * (K2 * L);
+
+    double ssimR = 0.0, ssimG = 0.0, ssimB = 0.0;
+
+    // Iterate through each color channel (R-G-B)
+    for (int channel = 0; channel < 3; channel++) {
+        double muX = 0.0;
+        double muY = averageRGB[channel]; // Compress block
+
+        // Calculate real pixel average
+        for (int i = y; i < y + height; ++i) {
+            for (int j = x; j < x + width; ++j) {
+                muX += (*rgbMatrix)[i][j][channel];
+            }
+        }
+        muX /= pixelCount;
+
+        // Calculate variance and covariance
+        double sigmaX = 0.0;
+        double sigmaY = 0.0; // All pixel value are the same
+        double sigmaXY = 0.0; // sigmaX * 0 = 0
+
+        for (int i = y; i < y + height; ++i) {
+            for (int j = x; j < x + width; ++j) {
+                double original = (*rgbMatrix)[i][j][channel];
+                sigmaX += (original - muX) * (original - muX);
+            }
+        }
+
+        sigmaX /= (pixelCount - 1);
+
+        double numerator = (2 * muX * muY + C1) * (2 * sigmaXY + C2);
+        double denominator = (muX * muX + muY * muY + C1) * (sigmaX + sigmaY + C2);
+        double ssim = numerator / denominator;
+
+        if (channel == 0) 
+        {
+            ssimR = ssim;
+        }
+        else if (channel == 1) 
+        {
+            ssimG = ssim;
+        }
+        else 
+        {
+            ssimB = ssim;
+        }
+    }
+
+    return 0.3 * ssimR + 0.59 * ssimG + 0.11 * ssimB;
+}
+
+
+
 bool Block::calcIsValid() const
 {
-    if ((area / 4) < minBlockSize)
-    {
-        return true;
-    }
-    return (methodNum == 1 && getVariance() < threshold) ||
+    return ((area / 4) < minBlockSize) || 
+           (methodNum == 1 && getVariance() < threshold) ||
            (methodNum == 2 && getMeanAbsoluteDeviation() < threshold) ||
            (methodNum == 3 && getMaxPixelDiff() < threshold) ||
            (methodNum == 4 && getEntropy() < threshold);
+           (methodNum == 5 && getStructSimIdx() < threshold);
 }
