@@ -54,16 +54,16 @@ vector<double> Block::getAverageRGB() const
 
 double Block::getMaxPixelDiff() const
 {
-    double maxR = (*rgbMatrix)[x][y][0];
-    double maxG = (*rgbMatrix)[x][y][1];
-    double maxB = (*rgbMatrix)[x][y][2];
-    double minR = (*rgbMatrix)[x][y][0];
-    double minG = (*rgbMatrix)[x][y][1];
-    double minB = (*rgbMatrix)[x][y][2];
+    double maxR = (*rgbMatrix)[y][x][0];
+    double maxG = (*rgbMatrix)[y][x][1];
+    double maxB = (*rgbMatrix)[y][x][2];
+    double minR = (*rgbMatrix)[y][x][0];
+    double minG = (*rgbMatrix)[y][x][1];
+    double minB = (*rgbMatrix)[y][x][2];
 
-    for (int i = x; i < x + width; i++)
+    for (int i = y; i < y + height; i++)
     {
-        for (int j = y; j < y + height; j++)
+        for (int j = x; j < x + width; j++)
         {
             if ((double)(*rgbMatrix)[i][j][0] > maxR)
             {
@@ -98,9 +98,9 @@ double Block::getMaxPixelDiff() const
 double Block::getVariance() const
 {
     double varianceR = 0, varianceG = 0, varianceB = 0;
-    for (int i = x; i < x + width; i++)
+    for (int i = y; i < y + height; i++)
     {
-        for (int j = y; j < y + height; j++)
+        for (int j = x; j < x + width; j++)
         {
             varianceR += pow((double)(*rgbMatrix)[i][j][0] - averageRGB[0], 2);
             varianceG += pow((double)(*rgbMatrix)[i][j][1] - averageRGB[1], 2);
@@ -117,9 +117,9 @@ double Block::getVariance() const
 double Block::getMeanAbsoluteDeviation() const
 {
     double madR = 0, madG = 0, madB = 0;
-    for (int i = x; i < x + width; i++)
+    for (int i = y; i < y + height; i++)
     {
-        for (int j = y; j < y + height; j++)
+        for (int j = x; j < x + width; j++)
         {
             madR += abs((double)(*rgbMatrix)[i][j][0] - averageRGB[0]);
             madG += abs((double)(*rgbMatrix)[i][j][1] - averageRGB[1]);
@@ -136,9 +136,9 @@ double Block::getMeanAbsoluteDeviation() const
 double Block::getEntropy() const
 {
     double entropyR = 0, entropyG = 0, entropyB = 0;
-    for (int i = x; i < x + width; i++)
+    for (int i = y; i < y + height; i++)
     {
-        for (int j = y; j < y + height; j++)
+        for (int j = x; j < x + width; j++)
         {
             const double pixelR = (double)(*rgbMatrix)[i][j][0];
             const double pixelG = (double)(*rgbMatrix)[i][j][1];
@@ -160,7 +160,7 @@ double Block::getEntropy() const
 }
 
 double Block::getStructSimIdx() const {
-    int pixelCount = width * height;
+    int pixelCount = area;
 
     const double K1 = 0.01, K2 = 0.03, L = 255.0;
     const double C1 = (K1 * L) * (K1 * L);
@@ -224,6 +224,6 @@ bool Block::calcIsValid() const
            (methodNum == 1 && getVariance() < threshold) ||
            (methodNum == 2 && getMeanAbsoluteDeviation() < threshold) ||
            (methodNum == 3 && getMaxPixelDiff() < threshold) ||
-           (methodNum == 4 && getEntropy() < threshold);
+           (methodNum == 4 && getEntropy() < threshold) ||
            (methodNum == 5 && getStructSimIdx() < threshold);
 }
