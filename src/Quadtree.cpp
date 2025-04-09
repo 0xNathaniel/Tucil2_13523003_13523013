@@ -1,5 +1,6 @@
 #include "Quadtree.hpp"
 #include <opencv2/opencv.hpp>
+#include "Utils.hpp"
 
 using namespace std;
 using namespace cv;
@@ -59,9 +60,8 @@ void TreeNode::draw(Mat &output)
 {
     if (isLeaf)
     {
-        // This is a leaf TreeNode, fill with average color
         vector<double> avgColor = block.getAverageRGB();
-        Scalar color(avgColor[2], avgColor[1], avgColor[0]); // BGR format for OpenCV
+        Scalar color(avgColor[2], avgColor[1], avgColor[0]);
 
         // Draw rectangle with average color
         Point topLeft(block.getX(), block.getY());
@@ -71,8 +71,8 @@ void TreeNode::draw(Mat &output)
         rectangle(output, topLeft, bottomRight - Point(1, 1), color, -1); // -1 for filled rectangle
 
         // Draw a 1-pixel outline
-        Scalar outlineColor(0, 0, 0);                                           // Black outline
-        rectangle(output, topLeft, bottomRight - Point(1, 1), outlineColor, 1); // 1 for outline thickness
+        // Scalar outlineColor(0, 0, 0);                                           // Black outline
+        // rectangle(output, topLeft, bottomRight - Point(1, 1), outlineColor, 1); // 1 for outline thickness
     }
     else
     {
@@ -85,19 +85,53 @@ void TreeNode::draw(Mat &output)
         }
     }
 }
-int TreeNode::countLeafTreeNodes() const
+
+// New function to calculate the maximum depth of the tree
+int TreeNode::getMaxDepth() const
+{
+    return getMaxDepthRecursive();
+}
+
+int TreeNode::getMaxDepthRecursive() const
 {
     if (isLeaf)
     {
         return 1;
     }
 
-    int count = 0;
+    int maxChildDepth = 0;
     for (int i = 0; i < 4; i++)
     {
         if (child[i] != nullptr)
         {
-            count += child[i]->countLeafTreeNodes();
+            int childDepth = child[i]->getMaxDepthRecursive();
+            if (childDepth > maxChildDepth)
+            {
+                maxChildDepth = childDepth;
+            }
+        }
+    }
+    return maxChildDepth + 1;
+}
+
+// New function to calculate the total number of nodes in the tree
+int TreeNode::getTotalNodes() const
+{
+    return getTotalNodesRecursive();
+}
+
+int TreeNode::getTotalNodesRecursive() const
+{
+    int count = 1; // Count this node
+
+    if (!isLeaf)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (child[i] != nullptr)
+            {
+                count += child[i]->getTotalNodesRecursive();
+            }
         }
     }
     return count;
@@ -128,14 +162,12 @@ Quadtree::~Quadtree()
 // Compress the image using quadtree
 void Quadtree::compressImage()
 {
-    // Create the root Treenode, which will recursively create the entire tree
     if (root == nullptr)
     {
         root = new TreeNode(0, 0, width, height, rgbMatrix);
     }
 }
 
-// Save the compressed image to a file
 bool Quadtree::saveCompressedImage(const string &outputPath)
 {
     if (root == nullptr)
@@ -154,21 +186,25 @@ bool Quadtree::saveCompressedImage(const string &outputPath)
     root->draw(output);
 
     // Save the image
-    return imwrite(outputPath, output);
+    return imwrite(convertWindowsToWSLPath(outputPath), output);
 }
 
-// Get the size of the compressed representation (number of blocks * bytes per block)
-double Quadtree::getCompressedSize()
+// New function to get the maximum depth of the tree
+int Quadtree::getTreeDepth()
 {
     if (root == nullptr)
     {
-        return 0.0;
+        return 0;
     }
+    return root->getMaxDepth();
+}
 
-    // Count leaf Treenodes
-    int leafCount = root->countLeafTreeNodes();
-
-    // Each leaf Treenode stores position (2 integers), size (2 integers), and color (3 bytes)
-    // Total: 4 * sizeof(int) + 3 * sizeof(char) per leaf
-    return leafCount * (4 * sizeof(int) + 3 * sizeof(char));
+// New function to get the total number of nodes in the tree
+int Quadtree::getTotalNodes()
+{
+    if (root == nullptr)
+    {
+        return 0;
+    }
+    return root->getTotalNodes();
 }

@@ -12,7 +12,7 @@ string ImageProcessor::inputImagePath()
     // Meminta input image path hingga pengguna exit atau memberikan alamat gambar yang valid
     while (true)
     {
-        cout << "Masukkan alamat absolut gambar: ";
+        cout << "Masukkan alamat absolut gambar input: ";
         getline(cin, imagePath);
 
         if (imagePath == "exit")

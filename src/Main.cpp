@@ -1,6 +1,8 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
 #include <vector>
+#include <chrono>
+#include <thread>
 
 #include "ImageProcessor.hpp"
 #include "Quadtree.hpp"
@@ -19,46 +21,61 @@ int main()
     // 2: Max Pixel Difference
     // 3: Entropy
 
-    string imagePath;
+    string inputImagePath;
+    string outputImagePath;
     int varianceMethod;
     double varianceThreshold;
     int minBlockSize;
     vector<vector<vector<int>>> rgbMatrix;
 
-    imagePath = ImageProcessor::inputImagePath();
-    if (imagePath == "exit")
+    inputImagePath = ImageProcessor::inputImagePath();
+    if (inputImagePath == "exit")
     {
         return -1;
     }
-    rgbMatrix = ImageProcessor::loadImage(imagePath);
+    rgbMatrix = ImageProcessor::loadImage(inputImagePath);
 
     // Constraints input
     tie(varianceMethod, varianceThreshold, minBlockSize) = validateInputConstraints();
 
-    int width, height;
-    width = rgbMatrix[0].size();
-    height = rgbMatrix.size();
+    int width = rgbMatrix[0].size();
+    int height = rgbMatrix.size();
+
+    cout << "Masukkan alamat absolut gambar output: ";
+    cin >> outputImagePath;
+
+    long long originalFileSize = getFileSize(inputImagePath);
+
+    auto start = std::chrono::high_resolution_clock::now();
 
     Quadtree quadtree(width, height, &rgbMatrix, varianceMethod, varianceThreshold, minBlockSize);
-    cout << "compressing" << endl;
+    cout << "Compressing . . . " << endl;
     quadtree.compressImage();
 
-    string outputPath = imagePath.substr(0, imagePath.find_last_of('.')) + "_compressed.jpg";
-    if (quadtree.saveCompressedImage(outputPath))
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+    if (quadtree.saveCompressedImage(outputImagePath))
     {
-        cout << "Compressed image saved as: " << outputPath << endl;
+        long long compressedFileSize = getFileSize(convertWindowsToWSLPath(outputImagePath));
 
-        double originalSize = width * height * 3;
-        double compressedSize = quadtree.getCompressedSize();
-        double compressionRatio = originalSize / compressedSize;
+        double compressionPercentage = 0.0;
+        if (originalFileSize > 0 && compressedFileSize > 0)
+        {
+            compressionPercentage = (1.0 - (static_cast<double>(compressedFileSize) / static_cast<double>(originalFileSize))) * 100.0;
+        }
 
-        cout << "Original size: " << originalSize << " bytes" << endl;
-        cout << "Compressed size: " << compressedSize << " bytes" << endl;
-        cout << "Compression ratio: " << compressionRatio << ":1" << endl;
+        cout << "Waktu Eksekusi: " << duration.count() << " ms" << endl;
+        cout << "Ukuran Original: " << originalFileSize << " bytes" << endl;
+        cout << "Ukuran Compressed: " << compressedFileSize << " bytes" << endl;
+        cout << "% kompresi: " << compressionPercentage << "%" << endl;
+        cout << "Kedalaman Pohon: " << quadtree.getTreeDepth() << endl;
+        cout << "Banyak Simpul: " << quadtree.getTotalNodes() << endl;
+        cout << "Gambar Disimpan Ke: " << outputImagePath << endl;
     }
     else
     {
-        cout << "Failed to save compressed image." << endl;
+        cout << "Gagal Menyimpan Gambar." << endl;
     }
 
     return 0;

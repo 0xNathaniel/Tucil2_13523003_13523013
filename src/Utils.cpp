@@ -1,6 +1,7 @@
 #include "Utils.hpp"
 #include <iostream>
 #include <algorithm>
+#include <fstream>
 
 using namespace std;
 
@@ -41,7 +42,8 @@ tuple<double, double, int> validateInputConstraints()
         {
             break;
         }
-        cout << "Input tidak valid. Coba lagi." << endl << endl;
+        cout << "Input tidak valid. Coba lagi." << endl
+             << endl;
     }
 
     // Input varianceThreshold
@@ -82,4 +84,14 @@ tuple<double, double, int> validateInputConstraints()
     }
 
     return make_tuple(varianceMethod, varianceThreshold, minBlockSize);
+}
+
+long long getFileSize(const string &filePath)
+{
+    ifstream file(filePath, ifstream::ate | ifstream::binary);
+    if (!file.is_open())
+    {
+        return -1;
+    }
+    return file.tellg();
 }

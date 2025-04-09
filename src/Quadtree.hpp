@@ -23,7 +23,12 @@ public:
 
     void subdivide(const vector<vector<vector<int>>> *rgbMatrix);
     void draw(Mat &output);
-    int countLeafTreeNodes() const;
+    int getMaxDepth() const;
+    int getTotalNodes() const;
+
+private:
+    int getMaxDepthRecursive() const;
+    int getTotalNodesRecursive() const;
 };
 
 class Quadtree
@@ -40,8 +45,9 @@ public:
 
     void compressImage();
     bool saveCompressedImage(const string &outputPath);
-    double getCompressedSize();
     const vector<vector<vector<int>>> *getImageMatrix() const;
+    int getTreeDepth();
+    int getTotalNodes();
 };
 
 #endif
