@@ -189,7 +189,6 @@ bool Quadtree::saveCompressedImage(const string &outputPath)
     return imwrite(convertWindowsToWSLPath(outputPath), output);
 }
 
-// New function to get the maximum depth of the tree
 int Quadtree::getTreeDepth()
 {
     if (root == nullptr)
@@ -199,7 +198,6 @@ int Quadtree::getTreeDepth()
     return root->getMaxDepth();
 }
 
-// New function to get the total number of nodes in the tree
 int Quadtree::getTotalNodes()
 {
     if (root == nullptr)
@@ -207,4 +205,43 @@ int Quadtree::getTotalNodes()
         return 0;
     }
     return root->getTotalNodes();
+}
+
+void TreeNode::drawAtDepth(Mat &output, int targetDepth, int currentDepth)
+{
+    if (currentDepth == targetDepth || (isLeaf && currentDepth < targetDepth))
+    {
+        vector<double> avgColor = block.getAverageRGB();
+        Scalar color(avgColor[2], avgColor[1], avgColor[0]);
+
+        // Draw rectangle with average color
+        Point topLeft(block.getX(), block.getY());
+        Point bottomRight(block.getX() + block.getWidth(), block.getY() + block.getHeight());
+
+        // Fill the rectangle with color
+        rectangle(output, topLeft, bottomRight - Point(1, 1), color, -1);
+    }
+    else if (currentDepth < targetDepth)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (child[i] != nullptr)
+            {
+                child[i]->drawAtDepth(output, targetDepth, currentDepth + 1);
+            }
+        }
+    }
+}
+
+void Quadtree::renderAtDepth(Mat &output, int depth)
+{
+    if (root == nullptr) {
+        return;
+    }
+    
+    // Clear the output image to white
+    output = Mat(height, width, CV_8UC3, Scalar(255, 255, 255));
+    
+    // Draw the quadtree at the specified depth
+    root->drawAtDepth(output, depth);
 }

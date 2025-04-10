@@ -25,6 +25,7 @@ public:
     void draw(Mat &output);
     int getMaxDepth() const;
     int getTotalNodes() const;
+    void drawAtDepth(Mat &output, int targetDepth, int currentDepth = 1);
 
 private:
     int getMaxDepthRecursive() const;
@@ -48,6 +49,7 @@ public:
     const vector<vector<vector<int>>> *getImageMatrix() const;
     int getTreeDepth();
     int getTotalNodes();
+    void renderAtDepth(Mat &output, int depth);
 };
 
 #endif
