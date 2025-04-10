@@ -1,19 +1,24 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -I./src `pkg-config --cflags opencv4`
-LDFLAGS = `pkg-config --libs opencv4`
+CXXFLAGS = -std=c++17 -Wall -I./src `pkg-config --cflags opencv4` `pkg-config --cflags Magick++`
+LDFLAGS = `pkg-config --libs opencv4` `pkg-config --libs Magick++`
 
-SRC = $(wildcard src/*.cpp)
-BIN = bin/main
+SRC_DIR = src
+BIN_DIR = bin
+SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
+TARGET = $(BIN_DIR)/main
 
-all: $(BIN)
+all: $(TARGET)
 
-$(BIN): $(SRC)
-	@mkdir -p bin
-	$(CXX) $(CXXFLAGS) $(SRC) -o $(BIN) $(LDFLAGS)
+$(TARGET): $(SOURCES) | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
 
-run: all
-	./$(BIN)
+run: $(TARGET)
+	$(TARGET)
 
 clean:
-	rm -rf bin/*
+	rm -f $(TARGET)
+
+.PHONY: all run clean
