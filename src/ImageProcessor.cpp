@@ -19,9 +19,7 @@ string ImageProcessor::inputImagePath()
             return "exit";
         }
 
-        imagePath = convertWindowsToWSLPath(imagePath);
-
-        Mat image = imread(imagePath, IMREAD_COLOR);
+        Mat image = imread(convertWindowsToWSLPath(imagePath), IMREAD_COLOR);
         if (image.empty())
         {
             cout << "Gambar tidak ditemukan!" << endl;
@@ -35,7 +33,7 @@ string ImageProcessor::inputImagePath()
 
 vector<vector<vector<int>>> ImageProcessor::loadImage(const string &imagePath)
 {
-    Mat image = imread(imagePath, IMREAD_COLOR);
+    Mat image = imread(convertWindowsToWSLPath(imagePath), IMREAD_COLOR);
     int rows = image.rows;
     int cols = image.cols;
     vector<vector<vector<int>>> rgbMatrix(rows, vector<vector<int>>(cols, vector<int>(3)));
