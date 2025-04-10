@@ -22,7 +22,7 @@ int main()
     double varianceThreshold;
     int minBlockSize;
     vector<vector<vector<int>>> rgbMatrix;
-    int gifFrameDelay = 500; // Default delay between frames in milliseconds
+    int gifFrameDelay = 1000;
 
     // Input image path and load image
     inputImagePath = ImageProcessor::inputImagePath();
@@ -45,22 +45,6 @@ int main()
     // Input gif output path
     cout << "Masukkan alamat absolut GIF output: ";
     outputGIFPath = askValidPath("GIF output");
-    
-    // Input frame delay for GIF
-    cout << "Masukkan delay antar frame (ms, default 500): ";
-    string delayInput;
-    getline(cin, delayInput);
-    if (!delayInput.empty()) {
-        try {
-            gifFrameDelay = stoi(delayInput);
-            if (gifFrameDelay < 10) {
-                cout << "Delay terlalu kecil. Menggunakan default 500ms." << endl;
-                gifFrameDelay = 500;
-            }
-        } catch (...) {
-            cout << "Input tidak valid. Menggunakan default 500ms." << endl;
-        }
-    }
 
     long long originalFileSize = getFileSize(inputImagePath);
 

@@ -135,88 +135,112 @@ double Block::getMeanAbsoluteDeviation() const
 
 double Block::getEntropy() const
 {
-    double entropyR = 0, entropyG = 0, entropyB = 0;
+    vector<int> histR(256, 0);
+    vector<int> histG(256, 0);
+    vector<int> histB(256, 0);
+    
     for (int i = y; i < y + height; i++)
     {
         for (int j = x; j < x + width; j++)
         {
-            const double pixelR = (double)(*rgbMatrix)[i][j][0];
-            const double pixelG = (double)(*rgbMatrix)[i][j][1];
-            const double pixelB = (double)(*rgbMatrix)[i][j][2];
-
-            if (pixelR > 0)
-                entropyR += (pixelR * log2(pixelR));
-            if (pixelG > 0)
-                entropyG += (pixelG * log2(pixelG));
-            if (pixelB > 0)
-                entropyB += (pixelB * log2(pixelB));
+            int r = (*rgbMatrix)[i][j][0];
+            int g = (*rgbMatrix)[i][j][1];
+            int b = (*rgbMatrix)[i][j][2];
+            
+            histR[r]++;
+            histG[g]++;
+            histB[b]++;
         }
     }
+    
+    double entropyR = 0, entropyG = 0, entropyB = 0;
+    
+    for (int i = 0; i < 256; i++)
+    {
+        double probR = (double)histR[i] / area;
+        double probG = (double)histG[i] / area;
+        double probB = (double)histB[i] / area;
+        
+        if (probR > 0)
+            entropyR += (probR * log2(probR));
+        if (probG > 0)
+            entropyG += (probG * log2(probG));
+        if (probB > 0)
+            entropyB += (probB * log2(probB));
+    }
+    
     entropyR = -entropyR;
     entropyG = -entropyG;
     entropyB = -entropyB;
-
+    
     return (entropyR + entropyG + entropyB) / 3.0;
 }
 
-double Block::getStructSimIdx() const {
-    int pixelCount = area;
-
-    const double K1 = 0.01, K2 = 0.03, L = 255.0;
+double Block::getStructSimIdx() const 
+{
+    const double K1 = 0.01, K2 = 0.03;
+    const double L = 255.0; 
     const double C1 = (K1 * L) * (K1 * L);
     const double C2 = (K2 * L) * (K2 * L);
-
-    double ssimR = 0.0, ssimG = 0.0, ssimB = 0.0;
-
-    // Iterate through each color channel (R-G-B)
-    for (int channel = 0; channel < 3; channel++) {
+    
+    double ssimSum = 0.0;
+    
+    for (int channel = 0; channel < 3; channel++) 
+    {
         double muX = 0.0;
-        double muY = averageRGB[channel]; // Compress block
-
-        // Calculate real pixel average
-        for (int i = y; i < y + height; ++i) {
-            for (int j = x; j < x + width; ++j) {
+        double sigmaX = 0.0;
+        
+        for (int i = y; i < y + height; ++i) 
+        {
+            for (int j = x; j < x + width; ++j) 
+            {
                 muX += (*rgbMatrix)[i][j][channel];
             }
         }
-        muX /= pixelCount;
-
-        // Calculate variance and covariance
-        double sigmaX = 0.0;
-        double sigmaY = 0.0; // All pixel value are the same
-        double sigmaXY = 0.0; // sigmaX * 0 = 0
-
-        for (int i = y; i < y + height; ++i) {
-            for (int j = x; j < x + width; ++j) {
-                double original = (*rgbMatrix)[i][j][channel];
-                sigmaX += (original - muX) * (original - muX);
+        muX /= area;
+        
+        double muY = averageRGB[channel];
+        
+        for (int i = y; i < y + height; ++i) 
+        {
+            for (int j = x; j < x + width; ++j) 
+            {
+                double diff = (*rgbMatrix)[i][j][channel] - muX;
+                sigmaX += diff * diff;
             }
         }
+        sigmaX /= area;
+        
+        double sigmaXY = 0.0;
+        for (int i = y; i < y + height; ++i) 
+        {
+            for (int j = x; j < x + width; ++j) 
+            {
+                sigmaXY += ((*rgbMatrix)[i][j][channel] - muX) * (muY - muY);
+            }
+        }
+        sigmaXY /= area;
 
-        sigmaX /= (pixelCount - 1);
-
-        double numerator = (2 * muX * muY + C1) * (2 * sigmaXY + C2);
-        double denominator = (muX * muX + muY * muY + C1) * (sigmaX + sigmaY + C2);
-        double ssim = numerator / denominator;
+        double numerator = (2 * muX * muY + C1);
+        double denominator = (muX * muX + muY * muY + C1) * (sigmaX + C2);
+        double ssim = (denominator > 0) ? numerator / denominator : 1.0;
 
         if (channel == 0) 
         {
-            ssimR = ssim;
-        }
+            ssimSum += 0.3 * ssim;
+        } 
         else if (channel == 1) 
-        {
-            ssimG = ssim;
-        }
+        { 
+            ssimSum += 0.59 * ssim;
+        } 
         else 
-        {
-            ssimB = ssim;
+        { 
+            ssimSum += 0.11 * ssim;
         }
     }
-
-    return 0.3 * ssimR + 0.59 * ssimG + 0.11 * ssimB;
+    
+    return 1.0 - ssimSum;
 }
-
-
 
 bool Block::calcIsValid() const
 {
