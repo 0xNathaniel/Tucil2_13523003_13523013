@@ -6,7 +6,6 @@
 GIF::GIF(int width, int height, int frameDelay)
     : width(width), height(height), frameDelay(frameDelay)
 {
-    // Initialize Magick++ library
     Magick::InitializeMagick(nullptr);
 }
 
@@ -23,13 +22,10 @@ void GIF::addFrame(const Mat &frame)
 
 void GIF::generateFramesFromQuadtree(Quadtree &quadtree)
 {
-    // Clear any existing frames
     frames.clear();
     
-    // Get the maximum depth of the tree
     int maxDepth = quadtree.getTreeDepth();
     
-    // Generate a frame for each depth level
     for (int depth = 1; depth <= maxDepth; depth++) {
         Mat frame(height, width, CV_8UC3, Scalar(255, 255, 255));
         quadtree.renderAtDepth(frame, depth);
@@ -39,7 +35,6 @@ void GIF::generateFramesFromQuadtree(Quadtree &quadtree)
 
 Magick::Image GIF::convertMatToMagickImage(const Mat& mat)
 {
-    // Ensure we're working with BGR format
     Mat bgr;
     if (mat.channels() == 3) {
         bgr = mat;
@@ -51,7 +46,6 @@ Magick::Image GIF::convertMatToMagickImage(const Mat& mat)
         throw runtime_error("Unsupported number of channels");
     }
     
-    // Create Magick++ image
     Magick::Image image(bgr.cols, bgr.rows, "BGR", Magick::CharPixel, bgr.data);
     return image;
 }
@@ -64,21 +58,18 @@ bool GIF::saveGif(const string &outputPath)
     }
     
     try {
-        // Create a list of Magick++ images
         std::vector<Magick::Image> magickImages;
         
         for (const auto& frame : frames) {
             Magick::Image image = convertMatToMagickImage(frame);
-            image.animationDelay(frameDelay / 10); // Magick++ uses 1/100ths of a second
+            image.animationDelay(frameDelay / 10);
             magickImages.push_back(image);
         }
         
-        // Set the animation to loop indefinitely
         for (auto& image : magickImages) {
-            image.animationIterations(0); // 0 means loop forever
+            image.animationIterations(0); 
         }
         
-        // Write the GIF
         Magick::writeImages(magickImages.begin(), magickImages.end(), outputPath);
         
         return true;
