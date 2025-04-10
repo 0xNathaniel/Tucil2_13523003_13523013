@@ -1,9 +1,12 @@
 #include "Utils.hpp"
-#include <iostream>
 #include <algorithm>
+#include <filesystem>
 #include <fstream>
+#include <iostream>
+#include <string>
 
 using namespace std;
+namespace fs = std::filesystem;
 
 string convertWindowsToWSLPath(const string &windowsPath)
 {
@@ -94,4 +97,42 @@ long long getFileSize(const string &filePath)
         return -1;
     }
     return file.tellg();
+}
+
+string askValidPath(const string &text) {
+    string path;
+
+    while (true) {
+        cout << "Masukkan path absolut " << text << " (misal: /home/user/output.png) atau exit: ";
+        getline(cin, path);
+
+        if (path == "exit") {
+            return path;
+        }
+
+        path = convertWindowsToWSLPath(path);
+
+        if (path.empty()) {
+            cout << "Path " << text << " tidak boleh kosong." << endl;
+            continue;
+        }
+
+        fs::path outputPath(path);
+        fs::path parentDir = outputPath.parent_path();
+
+        if (!outputPath.is_absolute()) {
+            cout << "Path harus absolut. Coba lagi." << endl;
+            continue;
+        }
+
+        if (!fs::exists(parentDir)) {
+            cout << "Direktori tidak ditemukan: " << parentDir << endl;
+            continue;
+        }
+
+
+        break;
+    }
+
+    return path;
 }
