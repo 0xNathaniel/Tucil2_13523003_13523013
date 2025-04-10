@@ -143,6 +143,9 @@ tuple<int, double, int, string> findOptimalSettingsBinarySearch(
 
     string tempOutputPath = inputImagePath.substr(0, inputImagePath.find_last_of('.')) + "_temp_compressed" + inputImagePath.substr(inputImagePath.find_last_of('.'));
 
+    cout << "Memulai proses . . ." << endl;
+    cout << "Mungkin memakan banyak waktu akibat iterasi seluruh metode . . ." << endl << endl;
+
     for (int method = 1; method <= 5; method++)
     {
         double minThreshold, maxThreshold;
@@ -163,6 +166,14 @@ tuple<int, double, int, string> findOptimalSettingsBinarySearch(
         }
 
         int minBlockSizes[] = {1, 2, 4, 8, 16};
+
+        string methodNames[] = {
+            "Variance",
+            "Mean Absolute Deviation (MAD)",
+            "Max Pixel Difference",
+            "Entropy",
+            "Structural Similarity Index (SSIM)"};
+        cout << "Metode (" << method << ") " << methodNames[method-1] << " . . ." << endl;
 
         for (int blockSize : minBlockSizes)
         {
@@ -232,6 +243,7 @@ tuple<int, double, int, string> findOptimalSettingsBinarySearch(
             }
         }
     }
+    cout << endl;
 
     return make_tuple(bestMethod, bestThreshold, bestMinBlockSize, tempOutputPath);
 }
