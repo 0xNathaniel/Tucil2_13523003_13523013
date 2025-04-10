@@ -1,4 +1,5 @@
 #include <opencv2/opencv.hpp>
+#include <Magick++.h>
 #include <iostream>
 #include <vector>
 #include <chrono>
@@ -7,27 +8,23 @@
 #include "ImageProcessor.hpp"
 #include "Quadtree.hpp"
 #include "Utils.hpp"
+#include "GIF.hpp"
 
 using namespace cv;
 using namespace std;
 
 int main()
 {
-    // Declarations
-
-    // Variance method encodings:
-    // 0: Variance
-    // 1: Mean Absolute Deviation (MAD)
-    // 2: Max Pixel Difference
-    // 3: Entropy
-
     string inputImagePath;
     string outputImagePath;
+    string outputGIFPath;
     int varianceMethod;
     double varianceThreshold;
     int minBlockSize;
     vector<vector<vector<int>>> rgbMatrix;
+    int gifFrameDelay = 500; // Default delay between frames in milliseconds
 
+    // Input image path and load image
     inputImagePath = ImageProcessor::inputImagePath();
     if (inputImagePath == "exit")
     {
@@ -41,20 +38,42 @@ int main()
     int width = rgbMatrix[0].size();
     int height = rgbMatrix.size();
 
+    // Input image path (output image)
     cout << "Masukkan alamat absolut gambar output: ";
-    cin >> outputImagePath;
+    outputImagePath = askValidPath("image output");
+
+    // Input gif output path
+    cout << "Masukkan alamat absolut GIF output: ";
+    outputGIFPath = askValidPath("GIF output");
+    
+    // Input frame delay for GIF
+    cout << "Masukkan delay antar frame (ms, default 500): ";
+    string delayInput;
+    getline(cin, delayInput);
+    if (!delayInput.empty()) {
+        try {
+            gifFrameDelay = stoi(delayInput);
+            if (gifFrameDelay < 10) {
+                cout << "Delay terlalu kecil. Menggunakan default 500ms." << endl;
+                gifFrameDelay = 500;
+            }
+        } catch (...) {
+            cout << "Input tidak valid. Menggunakan default 500ms." << endl;
+        }
+    }
 
     long long originalFileSize = getFileSize(inputImagePath);
 
-    auto start = std::chrono::high_resolution_clock::now();
+    auto start = chrono::high_resolution_clock::now();
 
     Quadtree quadtree(width, height, &rgbMatrix, varianceMethod, varianceThreshold, minBlockSize);
     cout << "Compressing . . . " << endl;
     quadtree.compressImage();
 
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
 
+    // Compression process
     if (quadtree.saveCompressedImage(outputImagePath))
     {
         long long compressedFileSize = getFileSize(convertWindowsToWSLPath(outputImagePath));
@@ -72,6 +91,20 @@ int main()
         cout << "Kedalaman Pohon: " << quadtree.getTreeDepth() << endl;
         cout << "Banyak Simpul: " << quadtree.getTotalNodes() << endl;
         cout << "Gambar Disimpan Ke: " << outputImagePath << endl;
+        
+        // Create and save GIF visualization
+        cout << "Generating GIF visualization..." << endl;
+        GIF gifGenerator(width, height, gifFrameDelay);
+        gifGenerator.generateFramesFromQuadtree(quadtree);
+
+        if (gifGenerator.saveGif(outputGIFPath))
+        {
+            cout << "GIF Disimpan Ke: " << outputGIFPath << endl;
+        }
+        else
+        {
+            cout << "Gagal Menyimpan GIF." << endl;
+        }
     }
     else
     {
