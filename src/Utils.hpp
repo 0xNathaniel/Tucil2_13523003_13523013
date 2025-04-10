@@ -8,5 +8,6 @@ using namespace std;
 
 string convertWindowsToWSLPath(const string &windowsPath);
 tuple<double, double, int> validateInputConstraints();
+long long getFileSize(const string &filePath);
 
 #endif

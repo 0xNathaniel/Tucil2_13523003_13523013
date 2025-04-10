@@ -30,11 +30,10 @@ public:
     double getVariance() const;
     double getMeanAbsoluteDeviation() const;
     double getEntropy() const;
+    double getStructSimIdx() const;
 
     // Validation
     bool calcIsValid() const;
-
-    // Note: belum ada attribute dan method SSIM
 };
 
 #endif
