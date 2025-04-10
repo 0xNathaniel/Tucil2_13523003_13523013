@@ -3,7 +3,7 @@ CXXFLAGS = -std=c++17 -Wall -I./src `pkg-config --cflags opencv4`
 LDFLAGS = `pkg-config --libs opencv4`
 
 SRC = $(wildcard src/*.cpp)
-BIN = bin/compressor
+BIN = bin/main
 
 all: $(BIN)
 
