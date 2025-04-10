@@ -24,7 +24,6 @@ int main()
     vector<vector<vector<int>>> rgbMatrix;
     int gifFrameDelay = 1000;
 
-    // Input image path and load image
     inputImagePath = ImageProcessor::inputImagePath();
     if (inputImagePath == "exit")
     {
@@ -37,13 +36,9 @@ int main()
 
     tie(varianceMethod, varianceThreshold, minBlockSize) = validateInputConstraints(inputImagePath, rgbMatrix, width, height);
 
-    tie(varianceMethod, varianceThreshold, minBlockSize) = validateInputConstraints(inputImagePath, rgbMatrix, width, height);
-
-    // Input image path (output image)
     cout << "Masukkan alamat absolut gambar output: ";
     outputImagePath = askValidPath("image output");
 
-    // Input gif output path
     cout << "Masukkan alamat absolut GIF output: ";
     outputGIFPath = askValidPath("GIF output");
 
@@ -77,7 +72,6 @@ int main()
         cout << "Banyak Simpul: " << quadtree.getTotalNodes() << endl;
         cout << "Gambar Disimpan Ke: " << outputImagePath << endl;
 
-        // Create and save GIF visualization
         cout << "Generating GIF visualization..." << endl;
         GIF gifGenerator(width, height, gifFrameDelay);
         gifGenerator.generateFramesFromQuadtree(quadtree);

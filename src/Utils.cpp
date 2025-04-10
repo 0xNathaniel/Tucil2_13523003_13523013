@@ -1,10 +1,4 @@
 #include "Utils.hpp"
-#include "Quadtree.hpp"
-#include <algorithm>
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <string>
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -145,10 +139,7 @@ tuple<int, double, int, string> findOptimalSettingsBinarySearch(
     int bestMinBlockSize = 0;
     double bestCompressionDiff = 1.0;
 
-    // Create a single temporary file path that will be reused
-    string tempOutputPath = inputImagePath.substr(0, inputImagePath.find_last_of('.')) +
-                            "_temp_compressed" +
-                            inputImagePath.substr(inputImagePath.find_last_of('.'));
+    string tempOutputPath = inputImagePath.substr(0, inputImagePath.find_last_of('.')) + "_temp_compressed" + inputImagePath.substr(inputImagePath.find_last_of('.'));
 
     for (int method = 1; method <= 5; method++)
     {
