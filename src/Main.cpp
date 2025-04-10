@@ -40,9 +40,10 @@ int main()
 
     tie(varianceMethod, varianceThreshold, minBlockSize) = validateInputConstraints(inputImagePath, rgbMatrix, width, height);
 ;
-    outputImagePath = askValidPath("image output");
+    outputImagePath = askValidPath("image output", {".jpg", ".jpeg", ".png"});
+    
+    outputGIFPath = askValidPath("GIF output", {".gif"});
 
-    outputGIFPath = askValidPath("GIF output");
 
     long long originalFileSize = getFileSize(inputImagePath);
 

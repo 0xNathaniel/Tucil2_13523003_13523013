@@ -248,16 +248,19 @@ tuple<int, double, int, string> findOptimalSettingsBinarySearch(
     return make_tuple(bestMethod, bestThreshold, bestMinBlockSize, tempOutputPath);
 }
 
-string askValidPath(const string &text)
+
+string askValidPath(const string &text, const vector<string> &allowedExtensions)
 {
     string path;
+    string extensionExample = allowedExtensions.empty() ? ".file" : allowedExtensions[0];
+    string examplePath = "/mnt/c/Users/user/output" + extensionExample;
 
     while (true)
     {
-        cout << "Masukkan path absolut " << text << " dan tulis nama serta tipe filenya!" << endl;
-        cout << "Misal: .../user/<nama_file>.<tipe_file>: ";
+        cout << "Masukkan path absolut " << text << " dan sertakan nama serta tipe file (contoh: " << examplePath << ")" << endl;
+        cout << "Ketik 'exit' untuk keluar.\n> ";
         cin >> path;
-        cout << endl << endl;
+        cout << endl;
 
         if (path == "exit")
         {
@@ -268,7 +271,7 @@ string askValidPath(const string &text)
 
         if (path.empty())
         {
-            cout << "Path " << text << " tidak boleh kosong." << endl << endl;
+            cout << "Path tidak boleh kosong." << endl;
             continue;
         }
 
@@ -277,13 +280,35 @@ string askValidPath(const string &text)
 
         if (!outputPath.is_absolute())
         {
-            cout << "Path harus absolut. Coba lagi." << endl << endl;
+            cout << "Path harus absolut." << endl;
             continue;
         }
 
         if (!fs::exists(parentDir))
         {
-            cout << "Direktori tidak ditemukan: " << parentDir << endl << endl;
+            cout << "Direktori tidak ditemukan: " << parentDir << endl;
+            continue;
+        }
+
+        string extension = outputPath.extension().string();
+        transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+
+        bool valid = false;
+        for (const string &ext : allowedExtensions)
+        {
+            if (extension == ext)
+            {
+                valid = true;
+                break;
+            }
+        }
+
+        if (!valid)
+        {
+            cout << "Ekstensi tidak valid. Harus salah satu dari: ";
+            for (const string &ext : allowedExtensions)
+                cout << ext << " ";
+            cout << "\n" << endl;
             continue;
         }
 
@@ -292,6 +317,8 @@ string askValidPath(const string &text)
 
     return path;
 }
+
+
 
 void printTitle() {
     string bold = "\033[1m";

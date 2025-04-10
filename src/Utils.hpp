@@ -11,6 +11,8 @@
 #include <fstream>
 #include <filesystem>
 #include "Quadtree.hpp"
+#include <regex>
+
 
 using namespace std;
 
@@ -27,7 +29,7 @@ tuple<int, double, int, string> findOptimalSettingsBinarySearch(
     const vector<vector<vector<int>>> &rgbMatrix,
     int width,
     int height);
-string askValidPath(const string &text);
+string askValidPath(const string &text, const vector<string> &allowedExtensions);
 void printTitle();
 
 #endif
