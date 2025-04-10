@@ -9,7 +9,7 @@ string convertWindowsToWSLPath(const string &windowsPath)
 {
     if (windowsPath.length() < 3 || windowsPath[1] != ':' || windowsPath[2] != '\\')
     {
-        return "";
+        return windowsPath;
     }
 
     string wslPath = "/mnt/";
