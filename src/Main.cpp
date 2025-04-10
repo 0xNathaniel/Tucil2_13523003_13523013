@@ -32,11 +32,12 @@ int main()
     }
     rgbMatrix = ImageProcessor::loadImage(inputImagePath);
 
-    // Constraints input
-    tie(varianceMethod, varianceThreshold, minBlockSize) = validateInputConstraints();
-
     int width = rgbMatrix[0].size();
     int height = rgbMatrix.size();
+
+    tie(varianceMethod, varianceThreshold, minBlockSize) = validateInputConstraints(inputImagePath, rgbMatrix, width, height);
+
+    tie(varianceMethod, varianceThreshold, minBlockSize) = validateInputConstraints(inputImagePath, rgbMatrix, width, height);
 
     // Input image path (output image)
     cout << "Masukkan alamat absolut gambar output: ";
@@ -60,7 +61,7 @@ int main()
     // Compression process
     if (quadtree.saveCompressedImage(outputImagePath))
     {
-        long long compressedFileSize = getFileSize(convertWindowsToWSLPath(outputImagePath));
+        long long compressedFileSize = getFileSize(outputImagePath);
 
         double compressionPercentage = 0.0;
         if (originalFileSize > 0 && compressedFileSize > 0)
@@ -75,7 +76,7 @@ int main()
         cout << "Kedalaman Pohon: " << quadtree.getTreeDepth() << endl;
         cout << "Banyak Simpul: " << quadtree.getTotalNodes() << endl;
         cout << "Gambar Disimpan Ke: " << outputImagePath << endl;
-        
+
         // Create and save GIF visualization
         cout << "Generating GIF visualization..." << endl;
         GIF gifGenerator(width, height, gifFrameDelay);

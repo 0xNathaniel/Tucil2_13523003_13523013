@@ -138,7 +138,7 @@ double Block::getEntropy() const
     vector<int> histR(256, 0);
     vector<int> histG(256, 0);
     vector<int> histB(256, 0);
-    
+
     for (int i = y; i < y + height; i++)
     {
         for (int j = x; j < x + width; j++)
@@ -146,21 +146,21 @@ double Block::getEntropy() const
             int r = (*rgbMatrix)[i][j][0];
             int g = (*rgbMatrix)[i][j][1];
             int b = (*rgbMatrix)[i][j][2];
-            
+
             histR[r]++;
             histG[g]++;
             histB[b]++;
         }
     }
-    
+
     double entropyR = 0, entropyG = 0, entropyB = 0;
-    
+
     for (int i = 0; i < 256; i++)
     {
         double probR = (double)histR[i] / area;
         double probG = (double)histG[i] / area;
         double probB = (double)histB[i] / area;
-        
+
         if (probR > 0)
             entropyR += (probR * log2(probR));
         if (probG > 0)
@@ -168,53 +168,53 @@ double Block::getEntropy() const
         if (probB > 0)
             entropyB += (probB * log2(probB));
     }
-    
+
     entropyR = -entropyR;
     entropyG = -entropyG;
     entropyB = -entropyB;
-    
+
     return (entropyR + entropyG + entropyB) / 3.0;
 }
 
-double Block::getStructSimIdx() const 
+double Block::getStructSimIdx() const
 {
     const double K1 = 0.01, K2 = 0.03;
-    const double L = 255.0; 
+    const double L = 255.0;
     const double C1 = (K1 * L) * (K1 * L);
     const double C2 = (K2 * L) * (K2 * L);
-    
+
     double ssimSum = 0.0;
-    
-    for (int channel = 0; channel < 3; channel++) 
+
+    for (int channel = 0; channel < 3; channel++)
     {
         double muX = 0.0;
         double sigmaX = 0.0;
-        
-        for (int i = y; i < y + height; ++i) 
+
+        for (int i = y; i < y + height; ++i)
         {
-            for (int j = x; j < x + width; ++j) 
+            for (int j = x; j < x + width; ++j)
             {
                 muX += (*rgbMatrix)[i][j][channel];
             }
         }
         muX /= area;
-        
+
         double muY = averageRGB[channel];
-        
-        for (int i = y; i < y + height; ++i) 
+
+        for (int i = y; i < y + height; ++i)
         {
-            for (int j = x; j < x + width; ++j) 
+            for (int j = x; j < x + width; ++j)
             {
                 double diff = (*rgbMatrix)[i][j][channel] - muX;
                 sigmaX += diff * diff;
             }
         }
         sigmaX /= area;
-        
+
         double sigmaXY = 0.0;
-        for (int i = y; i < y + height; ++i) 
+        for (int i = y; i < y + height; ++i)
         {
-            for (int j = x; j < x + width; ++j) 
+            for (int j = x; j < x + width; ++j)
             {
                 sigmaXY += ((*rgbMatrix)[i][j][channel] - muX) * (muY - muY);
             }
@@ -225,26 +225,26 @@ double Block::getStructSimIdx() const
         double denominator = (muX * muX + muY * muY + C1) * (sigmaX + C2);
         double ssim = (denominator > 0) ? numerator / denominator : 1.0;
 
-        if (channel == 0) 
+        if (channel == 0)
         {
             ssimSum += 0.3 * ssim;
-        } 
-        else if (channel == 1) 
-        { 
+        }
+        else if (channel == 1)
+        {
             ssimSum += 0.59 * ssim;
-        } 
-        else 
-        { 
+        }
+        else
+        {
             ssimSum += 0.11 * ssim;
         }
     }
-    
+
     return 1.0 - ssimSum;
 }
 
 bool Block::calcIsValid() const
 {
-    return ((area / 4) < minBlockSize) || 
+    return ((area / 4) < minBlockSize) ||
            (methodNum == 1 && getVariance() < threshold) ||
            (methodNum == 2 && getMeanAbsoluteDeviation() < threshold) ||
            (methodNum == 3 && getMaxPixelDiff() < threshold) ||
