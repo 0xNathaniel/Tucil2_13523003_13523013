@@ -28,5 +28,6 @@ tuple<int, double, int, string> findOptimalSettingsBinarySearch(
     int width,
     int height);
 string askValidPath(const string &text);
+void printTitle();
 
 #endif

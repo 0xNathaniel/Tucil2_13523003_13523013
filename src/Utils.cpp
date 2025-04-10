@@ -38,9 +38,10 @@ tuple<int, double, int> validateInputConstraints(
 
         if (targetCompression >= 0.0 && targetCompression <= 1.0)
         {
+            cout << endl;
             break;
         }
-        cout << "Persentase kompresi harus diantara 0 dan 1, coba lagi!" << endl;
+        cout << "Persentase kompresi harus diantara 0 dan 1, coba lagi!" << endl << endl;
     }
 
     if (targetCompression != 0)
@@ -50,14 +51,14 @@ tuple<int, double, int> validateInputConstraints(
 
         if (remove(convertWindowsToWSLPath(tempOutputPath).c_str()) != 0)
         {
-            cout << "Gagal menghapus.." << tempOutputPath << endl;
+            cout << "Gagal menghapus.." << tempOutputPath << endl << endl;
         }
         return make_tuple(varianceMethod, varianceThreshold, minBlockSize);
     }
 
     while (true)
     {
-        cout << "Masuk mode manual" << endl;
+        cout << "Masuk mode manual . . ." << endl << endl;
         cout << "Metode variance:" << endl;
         cout << "(1) Variance" << endl;
         cout << "(2) Mean Absolute Deviation (MAD)" << endl;
@@ -66,12 +67,12 @@ tuple<int, double, int> validateInputConstraints(
         cout << "(5) Structural Similarity Index (SSIM)" << endl;
         cout << "Pilih metode variance sesuai angkanya (1-5): ";
         cin >> varianceMethod;
+        cout << endl;
         if (varianceMethod >= 1 && varianceMethod <= 5)
         {
             break;
         }
-        cout << "Input tidak valid. Coba lagi." << endl
-             << endl;
+        cout << "Input tidak valid. Coba lagi." << endl << endl;
     }
 
     while (true)
@@ -84,7 +85,7 @@ tuple<int, double, int> validateInputConstraints(
             {
                 break;
             }
-            cout << "Threshold harus bernilai antara 0-1. Coba lagi." << endl;
+            cout << "Threshold harus bernilai antara 0-1. Coba lagi." << endl << endl;
         }
         else
         {
@@ -92,7 +93,7 @@ tuple<int, double, int> validateInputConstraints(
             {
                 break;
             }
-            cout << "Threshold harus lebih besar dari 0. Coba lagi." << endl;
+            cout << "Threshold harus lebih besar dari 0. Coba lagi." << endl << endl;
         }
     }
 
@@ -102,9 +103,10 @@ tuple<int, double, int> validateInputConstraints(
         cin >> minBlockSize;
         if (minBlockSize > 0)
         {
+            cout << endl;
             break;
         }
-        cout << "Ukuran blok harus lebih besar dari 0. Coba lagi.\n";
+        cout << "Ukuran blok harus lebih besar dari 0. Coba lagi." << endl << endl;
     }
 
     return make_tuple(varianceMethod, varianceThreshold, minBlockSize);
@@ -130,7 +132,7 @@ tuple<int, double, int, string> findOptimalSettingsBinarySearch(
     const long long originalFileSize = getFileSize(inputImagePath);
     if (originalFileSize <= 0)
     {
-        cout << "Size file original tidak dapat ditentukan." << endl;
+        cout << "Size file original tidak dapat ditentukan." << endl << endl;
         return make_tuple(1, 50.0, 4, inputImagePath);
     }
 
@@ -178,14 +180,14 @@ tuple<int, double, int, string> findOptimalSettingsBinarySearch(
 
                     if (!quadtree.saveCompressedImage(tempOutputPath))
                     {
-                        cout << "Gagal menyimpan temp." << endl;
+                        cout << "Gagal menyimpan temp." << endl << endl;
                         continue;
                     }
 
                     long long compressedSize = getFileSize(tempOutputPath);
                     if (compressedSize <= 0)
                     {
-                        cout << "Gagal membaca." << endl;
+                        cout << "Gagal membaca." << endl << endl;
                         continue;
                     }
 
@@ -225,7 +227,7 @@ tuple<int, double, int, string> findOptimalSettingsBinarySearch(
                 }
                 catch (const exception &e)
                 {
-                    cout << "Error: " << e.what() << endl;
+                    cout << "Error: " << e.what() << endl << endl;
                 }
             }
         }
@@ -240,8 +242,10 @@ string askValidPath(const string &text)
 
     while (true)
     {
-        cout << "Masukkan path absolut " << text << " (misal: /home/user/output.png) atau exit: ";
-        getline(cin, path);
+        cout << "Masukkan path absolut " << text << " dan tulis nama serta tipe filenya!" << endl;
+        cout << "Misal: .../user/<nama_file>.<tipe_file>: ";
+        cin >> path;
+        cout << endl << endl;
 
         if (path == "exit")
         {
@@ -252,7 +256,7 @@ string askValidPath(const string &text)
 
         if (path.empty())
         {
-            cout << "Path " << text << " tidak boleh kosong." << endl;
+            cout << "Path " << text << " tidak boleh kosong." << endl << endl;
             continue;
         }
 
@@ -261,13 +265,13 @@ string askValidPath(const string &text)
 
         if (!outputPath.is_absolute())
         {
-            cout << "Path harus absolut. Coba lagi." << endl;
+            cout << "Path harus absolut. Coba lagi." << endl << endl;
             continue;
         }
 
         if (!fs::exists(parentDir))
         {
-            cout << "Direktori tidak ditemukan: " << parentDir << endl;
+            cout << "Direktori tidak ditemukan: " << parentDir << endl << endl;
             continue;
         }
 
@@ -275,4 +279,26 @@ string askValidPath(const string &text)
     }
 
     return path;
+}
+
+void printTitle() {
+    string bold = "\033[1m";
+    string reset = "\033[0m";
+
+    cout << bold << R"(
+        ___    _   _     _     ___    _____   ___   ___   ___          
+       / _ \  | | | |   /_\   |   \  |_   _| | _ \ | __| | __|         
+      | (_) | | |_| |  / _ \  | |) |   | |   |   / | _|  | _|          
+       \__\_\  \___/  /_/ \_\ |___/    |_|   |_|_\ |___| |___|         
+   ___    ___    __  __   ___   ___   ___   ___   ___    ___    ___ 
+  / __|  / _ \  |  \/  | | _ \ | _ \ | __| / __| / __|  / _ \  | _ \
+ | (__  | (_) | | |\/| | |  _/ |   / | _|  \__ \ \__ \ | (_) | |   /
+  \___|  \___/  |_|  |_| |_|   |_|_\ |___| |___/ |___/  \___/  |_|_\
+    )" << endl << endl;
+ 
+    cout << "       Selamat datang pada program Quadtree Image Compression!" << endl;
+    cout << "  Program ini menggunakan algoritma Quadtree untuk mengompres gambar." << endl;
+    cout << "          Silakan input alamat gambar dan pengaturan lainnya!"  << endl;
+    cout << "              Jika ingin keluar, ketik 'exit' pada input." << reset;
+    cout << endl << endl << endl;
 }

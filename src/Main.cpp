@@ -22,7 +22,11 @@ int main()
     double varianceThreshold;
     int minBlockSize;
     vector<vector<vector<int>>> rgbMatrix;
+
     int gifFrameDelay = 1000;
+
+    printTitle();
+    
 
     inputImagePath = ImageProcessor::inputImagePath();
     if (inputImagePath == "exit")
@@ -35,11 +39,9 @@ int main()
     int height = rgbMatrix.size();
 
     tie(varianceMethod, varianceThreshold, minBlockSize) = validateInputConstraints(inputImagePath, rgbMatrix, width, height);
-
-    cout << "Masukkan alamat absolut gambar output: ";
+;
     outputImagePath = askValidPath("image output");
 
-    cout << "Masukkan alamat absolut GIF output: ";
     outputGIFPath = askValidPath("GIF output");
 
     long long originalFileSize = getFileSize(inputImagePath);
@@ -47,7 +49,7 @@ int main()
     auto start = chrono::high_resolution_clock::now();
 
     Quadtree quadtree(width, height, &rgbMatrix, varianceMethod, varianceThreshold, minBlockSize);
-    cout << "Compressing . . . " << endl;
+    cout << "Compressing . . . " << endl << endl;
     quadtree.compressImage();
 
     auto end = chrono::high_resolution_clock::now();
@@ -64,30 +66,31 @@ int main()
             compressionPercentage = (1.0 - (static_cast<double>(compressedFileSize) / static_cast<double>(originalFileSize))) * 100.0;
         }
 
-        cout << "Waktu Eksekusi: " << duration.count() << " ms" << endl;
-        cout << "Ukuran Original: " << originalFileSize << " bytes" << endl;
-        cout << "Ukuran Compressed: " << compressedFileSize << " bytes" << endl;
-        cout << "% kompresi: " << compressionPercentage << "%" << endl;
-        cout << "Kedalaman Pohon: " << quadtree.getTreeDepth() << endl;
-        cout << "Banyak Simpul: " << quadtree.getTotalNodes() << endl;
-        cout << "Gambar Disimpan Ke: " << outputImagePath << endl;
+        cout << "Waktu eksekusi: " << duration.count() << " ms" << endl;
+        cout << "Ukuran original: " << originalFileSize << " bytes" << endl;
+        cout << "Ukuran compressed: " << compressedFileSize << " bytes" << endl;
+        cout << "Persentase kompresi: " << compressionPercentage << "%" << endl;
+        cout << "Kedalaman pohon: " << quadtree.getTreeDepth() << endl;
+        cout << "Banyak simpul: " << quadtree.getTotalNodes() << endl << endl;
 
-        cout << "Generating GIF visualization..." << endl;
+        cout << "Gambar berhasil disimpan di: " << outputImagePath << endl << endl;
+
+        cout << "Membuat output GIF . . ." << endl;
         GIF gifGenerator(width, height, gifFrameDelay);
         gifGenerator.generateFramesFromQuadtree(quadtree);
 
         if (gifGenerator.saveGif(outputGIFPath))
         {
-            cout << "GIF Disimpan Ke: " << outputGIFPath << endl;
+            cout << "GIF berhasil disimpan di: " << outputGIFPath << endl; 
         }
         else
         {
-            cout << "Gagal Menyimpan GIF." << endl;
+            cout << "Gagal menyimpan GIF!" << endl;
         }
     }
     else
     {
-        cout << "Gagal Menyimpan Gambar." << endl;
+        cout << "Gagal menyimpan gambar!" << endl;
     }
 
     return 0;
