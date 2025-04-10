@@ -188,8 +188,6 @@ double Block::getStructSimIdx() const
     for (int channel = 0; channel < 3; channel++)
     {
         double muX = 0.0;
-        double sigmaX = 0.0;
-
         for (int i = y; i < y + height; ++i)
         {
             for (int j = x; j < x + width; ++j)
@@ -201,6 +199,7 @@ double Block::getStructSimIdx() const
 
         double muY = averageRGB[channel];
 
+        double sigmaX = 0.0;
         for (int i = y; i < y + height; ++i)
         {
             for (int j = x; j < x + width; ++j)
@@ -216,24 +215,35 @@ double Block::getStructSimIdx() const
         {
             for (int j = x; j < x + width; ++j)
             {
-                sigmaXY += ((*rgbMatrix)[i][j][channel] - muX) * (muY - muY);
+                sigmaXY += ((*rgbMatrix)[i][j][channel] - muX) * ((*rgbMatrix)[i][j][channel] - muY);
             }
         }
         sigmaXY /= area;
 
-        double numerator = (2 * muX * muY + C1);
-        double denominator = (muX * muX + muY * muY + C1) * (sigmaX + C2);
+        double sigmaY = 0.0;
+        for (int i = y; i < y + height; ++i)
+        {
+            for (int j = x; j < x + width; ++j)
+            {
+                double diff = (*rgbMatrix)[i][j][channel] - muY;
+                sigmaY += diff * diff;
+            }
+        }
+        sigmaY /= area;
+
+        double numerator = (2 * muX * muY + C1) * (2 * sigmaXY + C2);
+        double denominator = (muX * muX + muY * muY + C1) * (sigmaX + sigmaY + C2);
         double ssim = (denominator > 0) ? numerator / denominator : 1.0;
 
-        if (channel == 0)
+        if (channel == 0) 
         {
             ssimSum += 0.3 * ssim;
         }
-        else if (channel == 1)
+        else if (channel == 1) 
         {
             ssimSum += 0.59 * ssim;
         }
-        else
+        else 
         {
             ssimSum += 0.11 * ssim;
         }
