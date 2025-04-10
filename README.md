@@ -2,12 +2,12 @@
   <h1> Quadtree: Image Compressor </h1>
   <h3> Tugas Kecil 2 IF2211 Strategi Algoritma </h3>
 
-Image
-
 ![C++](https://img.shields.io/badge/C%2B%2B-17-blue?logo=c%2B%2B&logoColor=white)
 ![OpenCV](https://img.shields.io/badge/OpenCV-4.x-green?logo=opencv&logoColor=white)
 ![Magick++](https://img.shields.io/badge/Magick%2B%2B-ImageMagick-orange?logo=imagemagick&logoColor=white)
 ![WSL](https://img.shields.io/badge/WSL-Supported-blueviolet?logo=windows&logoColor=white)
+
+![HMIF GIF](./doc/HMIF.gif)
 
 </div>
 
