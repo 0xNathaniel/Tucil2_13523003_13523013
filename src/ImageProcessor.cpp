@@ -9,7 +9,6 @@ string ImageProcessor::inputImagePath()
 {
     string imagePath;
 
-    // Meminta input image path hingga pengguna exit atau memberikan alamat gambar yang valid
     while (true)
     {
         cout << "Masukkan alamat absolut gambar input: ";
@@ -36,7 +35,6 @@ string ImageProcessor::inputImagePath()
 
 vector<vector<vector<int>>> ImageProcessor::loadImage(const string &imagePath)
 {
-    // Mulai proses load image
     Mat image = imread(imagePath, IMREAD_COLOR);
     int rows = image.rows;
     int cols = image.cols;

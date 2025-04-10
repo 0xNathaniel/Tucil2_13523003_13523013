@@ -14,7 +14,7 @@ public:
     TreeNode *child[4];
     bool isLeaf;
 
-    static int varianceMethod; // Encodings
+    static int varianceMethod;
     static double varianceThreshold;
     static int minBlockSize;
 

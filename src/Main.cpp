@@ -13,14 +13,6 @@ using namespace std;
 
 int main()
 {
-    // Declarations
-
-    // Variance method encodings:
-    // 0: Variance
-    // 1: Mean Absolute Deviation (MAD)
-    // 2: Max Pixel Difference
-    // 3: Entropy
-
     string inputImagePath;
     string outputImagePath;
     int varianceMethod;

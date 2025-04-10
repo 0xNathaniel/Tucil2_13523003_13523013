@@ -27,7 +27,6 @@ tuple<double, double, int> validateInputConstraints()
     double varianceThreshold = 0.0;
     int minBlockSize = 0;
 
-    // Input varianceMethod
     while (true)
     {
         cout << "Metode variance:" << endl;
@@ -46,12 +45,10 @@ tuple<double, double, int> validateInputConstraints()
              << endl;
     }
 
-    // Input varianceThreshold
     while (true)
     {
         cout << "Masukkan threshold variance: ";
         cin >> varianceThreshold;
-        //  Validate SSIM variance threshold
         if (varianceMethod == 5)
         {
             if (varianceThreshold > 0 && varianceThreshold < 1)
@@ -60,7 +57,6 @@ tuple<double, double, int> validateInputConstraints()
             }
             cout << "Threshold harus bernilai antara 0-1. Coba lagi." << endl;
         }
-        // Validate other methods' variance threshold
         else
         {
             if (varianceThreshold > 0)
@@ -71,7 +67,6 @@ tuple<double, double, int> validateInputConstraints()
         }
     }
 
-    // Input minBlockSize
     while (true)
     {
         cout << "Masukkan ukuran blok minimum: ";

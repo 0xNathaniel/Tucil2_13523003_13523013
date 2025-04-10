@@ -5,12 +5,10 @@
 using namespace std;
 using namespace cv;
 
-// Initialize static members
 int TreeNode::varianceMethod = 0;
 double TreeNode::varianceThreshold = 0.0;
 int TreeNode::minBlockSize = 0;
 
-// TreeNode constructor
 TreeNode::TreeNode(int x, int y, int width, int height, const vector<vector<vector<int>>> *rgbMatrix)
     : block(x, y, width, height, TreeNode::minBlockSize, TreeNode::varianceThreshold, TreeNode::varianceMethod, rgbMatrix), isLeaf(true)
 {
@@ -63,16 +61,10 @@ void TreeNode::draw(Mat &output)
         vector<double> avgColor = block.getAverageRGB();
         Scalar color(avgColor[2], avgColor[1], avgColor[0]);
 
-        // Draw rectangle with average color
         Point topLeft(block.getX(), block.getY());
         Point bottomRight(block.getX() + block.getWidth(), block.getY() + block.getHeight());
 
-        // Fill the rectangle with color (no gaps)
-        rectangle(output, topLeft, bottomRight - Point(1, 1), color, -1); // -1 for filled rectangle
-
-        // Draw a 1-pixel outline
-        // Scalar outlineColor(0, 0, 0);                                           // Black outline
-        // rectangle(output, topLeft, bottomRight - Point(1, 1), outlineColor, 1); // 1 for outline thickness
+        rectangle(output, topLeft, bottomRight - Point(1, 1), color, -1);
     }
     else
     {
@@ -86,7 +78,6 @@ void TreeNode::draw(Mat &output)
     }
 }
 
-// New function to calculate the maximum depth of the tree
 int TreeNode::getMaxDepth() const
 {
     return getMaxDepthRecursive();
@@ -114,7 +105,6 @@ int TreeNode::getMaxDepthRecursive() const
     return maxChildDepth + 1;
 }
 
-// New function to calculate the total number of nodes in the tree
 int TreeNode::getTotalNodes() const
 {
     return getTotalNodesRecursive();
@@ -122,7 +112,7 @@ int TreeNode::getTotalNodes() const
 
 int TreeNode::getTotalNodesRecursive() const
 {
-    int count = 1; // Count this node
+    int count = 1;
 
     if (!isLeaf)
     {
@@ -137,19 +127,15 @@ int TreeNode::getTotalNodesRecursive() const
     return count;
 }
 
-// Quadtree constructor
 Quadtree::Quadtree(int width, int height, const vector<vector<vector<int>>> *rgbMatrix, int varianceMethod, double varianceThreshold, int minBlockSize) : width(width), height(height), rgbMatrix(rgbMatrix)
 {
-    // Set static TreeNode parameters
     TreeNode::varianceMethod = varianceMethod;
     TreeNode::varianceThreshold = varianceThreshold;
     TreeNode::minBlockSize = minBlockSize;
 
-    // Create root Treenode
     root = nullptr;
 }
 
-// Quadtree destructor
 Quadtree::~Quadtree()
 {
     if (root != nullptr)
@@ -159,7 +145,6 @@ Quadtree::~Quadtree()
     }
 }
 
-// Compress the image using quadtree
 void Quadtree::compressImage()
 {
     if (root == nullptr)
@@ -175,21 +160,16 @@ bool Quadtree::saveCompressedImage(const string &outputPath)
         return false;
     }
 
-    // Get the dimensions from the root Treenode's block
     int width = root->block.getWidth();
     int height = root->block.getHeight();
 
-    // Create output image
     Mat output(height, width, CV_8UC3, Scalar(255, 255, 255));
 
-    // Draw the quadtree
     root->draw(output);
 
-    // Save the image
     return imwrite(convertWindowsToWSLPath(outputPath), output);
 }
 
-// New function to get the maximum depth of the tree
 int Quadtree::getTreeDepth()
 {
     if (root == nullptr)
@@ -199,7 +179,6 @@ int Quadtree::getTreeDepth()
     return root->getMaxDepth();
 }
 
-// New function to get the total number of nodes in the tree
 int Quadtree::getTotalNodes()
 {
     if (root == nullptr)
