@@ -7,10 +7,10 @@
                 "D:\\Installers\\opencv\\build\\include",
                 "D:\\Installers\\opencv\\build\\include\\opencv2"
             ],
-            "compilerPath": "C:/MinGW/bin/gcc.exe",
+            "compilerPath": "C:/MinGW/bin/g++.exe",
             "cStandard": "${default}",
             "cppStandard": "${default}",
-            "intelliSenseMode": "windows-gcc-x86",
+            "intelliSenseMode": "windows-gcc-x64",
             "compilerArgs": [
                 ""
             ]
