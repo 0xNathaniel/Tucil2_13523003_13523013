@@ -41,7 +41,8 @@ tuple<int, double, int> validateInputConstraints(
             cout << endl;
             break;
         }
-        cout << "Persentase kompresi harus diantara 0 dan 1, coba lagi!" << endl << endl;
+        cout << "Persentase kompresi harus diantara 0 dan 1, coba lagi!" << endl
+             << endl;
     }
 
     if (targetCompression != 0)
@@ -51,14 +52,16 @@ tuple<int, double, int> validateInputConstraints(
 
         if (remove(convertWindowsToWSLPath(tempOutputPath).c_str()) != 0)
         {
-            cout << "Gagal menghapus.." << tempOutputPath << endl << endl;
+            cout << "Gagal menghapus.." << tempOutputPath << endl
+                 << endl;
         }
         return make_tuple(varianceMethod, varianceThreshold, minBlockSize);
     }
 
     while (true)
     {
-        cout << "Masuk mode manual . . ." << endl << endl;
+        cout << "Masuk mode manual . . ." << endl
+             << endl;
         cout << "Metode variance:" << endl;
         cout << "(1) Variance" << endl;
         cout << "(2) Mean Absolute Deviation (MAD)" << endl;
@@ -72,7 +75,8 @@ tuple<int, double, int> validateInputConstraints(
         {
             break;
         }
-        cout << "Input tidak valid. Coba lagi." << endl << endl;
+        cout << "Input tidak valid. Coba lagi." << endl
+             << endl;
     }
 
     while (true)
@@ -85,7 +89,8 @@ tuple<int, double, int> validateInputConstraints(
             {
                 break;
             }
-            cout << "Threshold harus bernilai antara 0-1. Coba lagi." << endl << endl;
+            cout << "Threshold harus bernilai antara 0-1. Coba lagi." << endl
+                 << endl;
         }
         else
         {
@@ -93,7 +98,8 @@ tuple<int, double, int> validateInputConstraints(
             {
                 break;
             }
-            cout << "Threshold harus lebih besar dari 0. Coba lagi." << endl << endl;
+            cout << "Threshold harus lebih besar dari 0. Coba lagi." << endl
+                 << endl;
         }
     }
 
@@ -106,7 +112,8 @@ tuple<int, double, int> validateInputConstraints(
             cout << endl;
             break;
         }
-        cout << "Ukuran blok harus lebih besar dari 0. Coba lagi." << endl << endl;
+        cout << "Ukuran blok harus lebih besar dari 0. Coba lagi." << endl
+             << endl;
     }
 
     return make_tuple(varianceMethod, varianceThreshold, minBlockSize);
@@ -132,7 +139,8 @@ tuple<int, double, int, string> findOptimalSettingsBinarySearch(
     const long long originalFileSize = getFileSize(inputImagePath);
     if (originalFileSize <= 0)
     {
-        cout << "Size file original tidak dapat ditentukan." << endl << endl;
+        cout << "Size file original tidak dapat ditentukan." << endl
+             << endl;
         return make_tuple(1, 50.0, 4, inputImagePath);
     }
 
@@ -144,7 +152,8 @@ tuple<int, double, int, string> findOptimalSettingsBinarySearch(
     string tempOutputPath = inputImagePath.substr(0, inputImagePath.find_last_of('.')) + "_temp_compressed" + inputImagePath.substr(inputImagePath.find_last_of('.'));
 
     cout << "Memulai proses . . ." << endl;
-    cout << "Mungkin memakan banyak waktu akibat iterasi seluruh metode . . ." << endl << endl;
+    cout << "Mungkin memakan banyak waktu akibat iterasi seluruh metode . . ." << endl
+         << endl;
 
     for (int method = 1; method <= 5; method++)
     {
@@ -159,13 +168,18 @@ tuple<int, double, int, string> findOptimalSettingsBinarySearch(
             minThreshold = 0.1;
             maxThreshold = 8.0;
         }
+        else if (method == 1)
+        {
+            minThreshold = 1.0;
+            maxThreshold = 255.0 * 255.0;
+        }
         else
         {
             minThreshold = 1.0;
             maxThreshold = 255.0;
         }
 
-        int minBlockSizes[] = {1, 2, 4, 8, 16};
+        int minBlockSizes[] = {1, 4, 9, 16};
 
         string methodNames[] = {
             "Variance",
@@ -173,14 +187,14 @@ tuple<int, double, int, string> findOptimalSettingsBinarySearch(
             "Max Pixel Difference",
             "Entropy",
             "Structural Similarity Index (SSIM)"};
-        cout << "Metode (" << method << ") " << methodNames[method-1] << " . . ." << endl;
+        cout << "Metode (" << method << ") " << methodNames[method - 1] << " . . ." << endl;
 
         for (int blockSize : minBlockSizes)
         {
             double lowThreshold = minThreshold;
             double highThreshold = maxThreshold;
 
-            for (int iteration = 0; iteration < 15; iteration++)
+            for (int iteration = 0; iteration < 10; iteration++)
             {
                 double midThreshold = lowThreshold + (highThreshold - lowThreshold) / 2.0;
 
@@ -191,14 +205,16 @@ tuple<int, double, int, string> findOptimalSettingsBinarySearch(
 
                     if (!quadtree.saveCompressedImage(tempOutputPath))
                     {
-                        cout << "Gagal menyimpan temp." << endl << endl;
+                        cout << "Gagal menyimpan temp." << endl
+                             << endl;
                         continue;
                     }
 
                     long long compressedSize = getFileSize(tempOutputPath);
                     if (compressedSize <= 0)
                     {
-                        cout << "Gagal membaca." << endl << endl;
+                        cout << "Gagal membaca." << endl
+                             << endl;
                         continue;
                     }
 
@@ -238,7 +254,8 @@ tuple<int, double, int, string> findOptimalSettingsBinarySearch(
                 }
                 catch (const exception &e)
                 {
-                    cout << "Error: " << e.what() << endl << endl;
+                    cout << "Error: " << e.what() << endl
+                         << endl;
                 }
             }
         }
@@ -247,7 +264,6 @@ tuple<int, double, int, string> findOptimalSettingsBinarySearch(
 
     return make_tuple(bestMethod, bestThreshold, bestMinBlockSize, tempOutputPath);
 }
-
 
 string askValidPath(const string &text, const vector<string> &allowedExtensions)
 {
@@ -308,7 +324,8 @@ string askValidPath(const string &text, const vector<string> &allowedExtensions)
             cout << "Ekstensi tidak valid. Harus salah satu dari: ";
             for (const string &ext : allowedExtensions)
                 cout << ext << " ";
-            cout << "\n" << endl;
+            cout << "\n"
+                 << endl;
             continue;
         }
 
@@ -318,9 +335,8 @@ string askValidPath(const string &text, const vector<string> &allowedExtensions)
     return path;
 }
 
-
-
-void printTitle() {
+void printTitle()
+{
     string bold = "\033[1m";
     string reset = "\033[0m";
 
@@ -333,11 +349,14 @@ void printTitle() {
   / __|  / _ \  |  \/  | | _ \ | _ \ | __| / __| / __|  / _ \  | _ \
  | (__  | (_) | | |\/| | |  _/ |   / | _|  \__ \ \__ \ | (_) | |   /
   \___|  \___/  |_|  |_| |_|   |_|_\ |___| |___/ |___/  \___/  |_|_\
-    )" << endl << endl;
- 
+    )" << endl
+         << endl;
+
     cout << "       Selamat datang pada program Quadtree Image Compression!" << endl;
     cout << "  Program ini menggunakan algoritma Quadtree untuk mengompres gambar." << endl;
-    cout << "          Silakan input alamat gambar dan pengaturan lainnya!"  << endl;
+    cout << "          Silakan input alamat gambar dan pengaturan lainnya!" << endl;
     cout << "              Jika ingin keluar, ketik 'exit' pada input." << reset;
-    cout << endl << endl << endl;
+    cout << endl
+         << endl
+         << endl;
 }
